@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import by.tigertosh.shoppinglist.entities.NoteItem
 import kotlinx.coroutines.flow.Flow
+import java.io.Serializable
 
 @Dao
 interface Dao {

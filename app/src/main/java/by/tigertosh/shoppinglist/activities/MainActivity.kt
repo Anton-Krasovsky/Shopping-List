@@ -1,13 +1,13 @@
 package by.tigertosh.shoppinglist.activities
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import by.tigertosh.shoppinglist.R
 import by.tigertosh.shoppinglist.databinding.ActivityMainBinding
+import by.tigertosh.shoppinglist.base.FragmentManager
+import by.tigertosh.shoppinglist.fragments.NoteFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,13 +30,13 @@ class MainActivity : AppCompatActivity() {
                    toast("You open settings")
                 }
                 R.id.notes -> {
-                    toast("You open notes")
+                    FragmentManager.setFragment(NoteFragment.newInstance(), this)
                 }
                 R.id.shop_list-> {
                     toast("You open shop list")
                 }
                 R.id.new_item -> {
-                    toast("You open new item")
+                    FragmentManager.currentFragment?.onClickNew()
                 }
             }
             true
