@@ -20,4 +20,4 @@ data class ShoppingListItem(
     val itemType: String = "item",
 
 
-)
+    )

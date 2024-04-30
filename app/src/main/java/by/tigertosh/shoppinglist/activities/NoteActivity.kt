@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import by.tigertosh.shoppinglist.R
 import by.tigertosh.shoppinglist.databinding.ActivityNoteBinding
 import by.tigertosh.shoppinglist.entities.NoteItem
@@ -19,10 +16,12 @@ import java.util.Locale
 class NoteActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNoteBinding
+    private var note: NoteItem? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-     binding = ActivityNoteBinding.inflate(layoutInflater).also { setContentView(it.root) }
+        binding = ActivityNoteBinding.inflate(layoutInflater).also { setContentView(it.root) }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        getNote()
 
     }
 
@@ -41,8 +40,16 @@ class NoteActivity : AppCompatActivity() {
     }
 
     private fun setNoteResult() {
+        var stateNote = "new"
+        val tempNote: NoteItem? = if (note == null) {
+            createNewNote()
+        } else {
+            stateNote = "update"
+            updateNote()
+        }
         val intent = Intent().apply {
-            putExtra(NoteFragment.NOTE_KEY, createNewNote())
+            putExtra(NoteFragment.NOTE_KEY, tempNote)
+            putExtra(NoteFragment.NOTE_STATE, stateNote)
         }
         setResult(RESULT_OK, intent)
         finish()
@@ -52,6 +59,7 @@ class NoteActivity : AppCompatActivity() {
         val formatter = SimpleDateFormat("hh:mm:ss - yyyy/MM/dd", Locale.getDefault())
         return formatter.format(Calendar.getInstance().time)
     }
+
     private fun createNewNote(): NoteItem = NoteItem(
         null,
         binding.textTitle.text.toString(),
@@ -59,5 +67,27 @@ class NoteActivity : AppCompatActivity() {
         getCurrentTime(),
         ""
     )
+
+    private fun getNote() {
+        val sNote = intent.getSerializableExtra(NoteFragment.NOTE_KEY)
+        if (sNote != null) {
+            note = sNote as NoteItem
+            fillNote()
+        }
+    }
+
+    private fun fillNote() = with(binding) {
+        if (note != null) {
+            textTitle.setText(note?.title)
+            textNoteDescription.setText(note?.content)
+        }
+    }
+
+    private fun updateNote() = with(binding) {
+        note?.copy(
+            title = textTitle.text.toString(),
+            content = textNoteDescription.text.toString()
+        )
+    }
 
 }

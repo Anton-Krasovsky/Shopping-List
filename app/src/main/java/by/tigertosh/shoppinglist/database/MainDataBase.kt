@@ -24,7 +24,7 @@ abstract class MainDataBase : RoomDatabase() {
         @Volatile
         private var INSTANCE: MainDataBase? = null
         fun getDataBase(context: Context): MainDataBase {
-            return INSTANCE ?: synchronized(this){
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MainDataBase::class.java,

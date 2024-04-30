@@ -10,14 +10,28 @@ import by.tigertosh.shoppinglist.R
 import by.tigertosh.shoppinglist.databinding.NoteListItemBinding
 import by.tigertosh.shoppinglist.entities.NoteItem
 
-class NoteAdapter : ListAdapter<NoteItem, NoteAdapter.ItemHolder>(Comparator()) {
+
+interface Listener {
+
+    fun onClickItem(note: NoteItem)
+    fun deleteItem(id: Int)
+}
+
+class NoteAdapter(private val listener: Listener) :
+    ListAdapter<NoteItem, NoteAdapter.ItemHolder>(Comparator()) {
 
     class ItemHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = NoteListItemBinding.bind(view)
-        fun setData(note: NoteItem) = with(binding) {
+        fun setData(note: NoteItem, listener: Listener) = with(binding) {
             noteTitle.text = note.title
             noteDescription.text = note.content
             noteTime.text = note.time
+            itemView.setOnClickListener {
+                listener.onClickItem(note)
+            }
+            buttonDeleteNote.setOnClickListener {
+                listener.deleteItem(note.id!!)
+            }
         }
     }
 
@@ -39,6 +53,6 @@ class NoteAdapter : ListAdapter<NoteItem, NoteAdapter.ItemHolder>(Comparator()) 
     }
 
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-        holder.setData(getItem(position))
+        holder.setData(getItem(position), listener)
     }
 }

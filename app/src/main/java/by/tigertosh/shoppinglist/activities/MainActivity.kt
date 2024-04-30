@@ -5,8 +5,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import by.tigertosh.shoppinglist.R
-import by.tigertosh.shoppinglist.databinding.ActivityMainBinding
 import by.tigertosh.shoppinglist.base.FragmentManager
+import by.tigertosh.shoppinglist.databinding.ActivityMainBinding
 import by.tigertosh.shoppinglist.fragments.NoteFragment
 
 class MainActivity : AppCompatActivity() {
@@ -23,18 +23,26 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setOnClickBNV() {
-        binding.bnv.setBackgroundColor(ContextCompat.getColor(applicationContext, android.R.color.transparent))
+        binding.bnv.setBackgroundColor(
+            ContextCompat.getColor(
+                applicationContext,
+                android.R.color.transparent
+            )
+        )
         binding.bnv.setOnItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.settings -> {
-                   toast("You open settings")
+                    toast("You open settings")
                 }
+
                 R.id.notes -> {
                     FragmentManager.setFragment(NoteFragment.newInstance(), this)
                 }
-                R.id.shop_list-> {
+
+                R.id.shop_list -> {
                     toast("You open shop list")
                 }
+
                 R.id.new_item -> {
                     FragmentManager.currentFragment?.onClickNew()
                 }
@@ -43,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun toast(text: String){
+    private fun toast(text: String) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 }
