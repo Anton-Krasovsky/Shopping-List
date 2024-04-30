@@ -2,6 +2,7 @@ package by.tigertosh.shoppinglist.fragments
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,20 +68,29 @@ class NoteFragment : BaseFragment(), Listener {
         }
     }
 
-
     private fun onEditResult() {
         editLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {
-            if (it.resultCode == Activity.RESULT_OK) {
+            if (it.data != null && it.resultCode == Activity.RESULT_OK) {
                 val noteState = it.data?.getStringExtra(NOTE_STATE)
+                val note = getNoteFromBundle(it.data!!)
                 if (noteState == "update") {
-                    viewModel.updateNote(it.data?.getSerializableExtra(NOTE_KEY) as NoteItem)
+                    viewModel.updateNote(note)
                 } else {
-                    viewModel.insertNote(it.data?.getSerializableExtra(NOTE_KEY) as NoteItem)
+                    viewModel.insertNote(note)
                 }
             }
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun getNoteFromBundle(intent: Intent): NoteItem {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra(NOTE_KEY, NoteItem::class.java)
+        } else {
+            intent.getSerializableExtra(NOTE_KEY)
+        } as NoteItem
     }
 
     companion object {
