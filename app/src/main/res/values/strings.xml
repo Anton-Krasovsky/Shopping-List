@@ -10,4 +10,5 @@
     <string name="note_description">Description</string>
     <string name="save">Save</string>
     <string name="bold">Bold</string>
+    <string name="colorpicker">ColorPicker</string>
 </resources>

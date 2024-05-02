@@ -1,19 +1,27 @@
 package by.tigertosh.shoppinglist.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.Animation.AnimationListener
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import by.tigertosh.shoppinglist.R
 import by.tigertosh.shoppinglist.databinding.ActivityNoteBinding
 import by.tigertosh.shoppinglist.entities.NoteItem
 import by.tigertosh.shoppinglist.fragments.NoteFragment
 import by.tigertosh.shoppinglist.utils.HtmlManager
+import by.tigertosh.shoppinglist.utils.MyTouchListener
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -28,6 +36,8 @@ class NoteActivity : AppCompatActivity() {
         binding = ActivityNoteBinding.inflate(layoutInflater).also { setContentView(it.root) }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         getNote()
+        moveColorPicker()
+        onClickColorListener()
 
     }
 
@@ -43,6 +53,12 @@ class NoteActivity : AppCompatActivity() {
             finish()
         } else if (item.itemId == R.id.bold_note) {
             setBoldForSelectedText()
+        } else if (item.itemId == R.id.colorPicker_note) {
+            if (binding.colorPicker.isShown) {
+                closeColorPicker()
+            } else {
+                openColorPicker()
+            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -127,5 +143,73 @@ class NoteActivity : AppCompatActivity() {
         textNoteDescription.text.trim()
         textNoteDescription.setSelection(startPosition)
     }
+
+    private fun setColorForSelectedText(colorId: Int) = with(binding) {
+        val startPosition = textNoteDescription.selectionStart
+        val endPosition = textNoteDescription.selectionEnd
+        val styles = textNoteDescription.text
+            .getSpans(startPosition, endPosition, ForegroundColorSpan::class.java)
+
+        if (styles.isNotEmpty()) textNoteDescription.text.removeSpan(styles[0])
+
+        textNoteDescription.text
+            .setSpan(ForegroundColorSpan(ContextCompat.getColor(this@NoteActivity, colorId)),
+                startPosition, endPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        textNoteDescription.text.trim()
+        textNoteDescription.setSelection(startPosition)
+    }
+
+    private fun onClickColorListener() = with(binding) {
+        redCP.setOnClickListener {
+            setColorForSelectedText(R.color.red_CP)
+        }
+        blueCP.setOnClickListener {
+            setColorForSelectedText(R.color.blue_CP)
+        }
+        greenCP.setOnClickListener {
+            setColorForSelectedText(R.color.green_CP)
+        }
+        greyCP.setOnClickListener {
+            setColorForSelectedText(R.color.grey_CP)
+        }
+        yellowCP.setOnClickListener {
+            setColorForSelectedText(R.color.yellow_CP)
+        }
+        orangeCP.setOnClickListener {
+            setColorForSelectedText(R.color.orange_CP)
+        }
+    }
+
+    private fun openColorPicker() {
+        binding.colorPicker.visibility = View.VISIBLE
+        val openAnim = AnimationUtils.loadAnimation(this, R.anim.open_color_picker)
+        binding.colorPicker.startAnimation(openAnim)
+    }
+
+    private fun closeColorPicker() {
+        val closeAnim = AnimationUtils.loadAnimation(this, R.anim.close_color_picker)
+        closeAnim.setAnimationListener(object : AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                binding.colorPicker.visibility = View.GONE
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+
+            }
+        })
+        binding.colorPicker.startAnimation(closeAnim)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun moveColorPicker() {
+        binding.colorPicker.setOnTouchListener(MyTouchListener())
+    }
+
+
+
 
 }
