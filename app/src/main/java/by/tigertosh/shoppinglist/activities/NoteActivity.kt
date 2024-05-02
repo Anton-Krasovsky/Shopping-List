@@ -2,6 +2,7 @@ package by.tigertosh.shoppinglist.activities
 
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.style.StyleSpan
@@ -13,6 +14,7 @@ import by.tigertosh.shoppinglist.databinding.ActivityNoteBinding
 import by.tigertosh.shoppinglist.entities.NoteItem
 import by.tigertosh.shoppinglist.fragments.NoteFragment
 import by.tigertosh.shoppinglist.utils.HtmlManager
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -76,10 +78,21 @@ class NoteActivity : AppCompatActivity() {
         ""
     )
 
+    @Suppress("DEPRECATION")
     private fun getNote() {
-        val sNote = intent.getSerializableExtra(NoteFragment.NOTE_KEY)
-        if (sNote != null) {
-            note = sNote as NoteItem
+        val sNote1: Serializable?
+        var sNote2: Serializable? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            sNote1 = intent.getSerializableExtra(NoteFragment.NOTE_KEY, NoteItem::class.java)
+            if (sNote1 != null) {
+                note = sNote1
+                fillNote()
+            }
+        } else {
+            sNote2 = intent.getSerializableExtra(NoteFragment.NOTE_KEY)
+        }
+        if (sNote2 != null) {
+            note = sNote2 as NoteItem
             fillNote()
         }
     }
