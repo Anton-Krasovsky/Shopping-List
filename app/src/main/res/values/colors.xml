@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-<!--    ColorPicker-->
+    <!--    ColorPicker-->
     <color name="red_CP">#F60606</color>
     <color name="yellow_CP">#FFEB3B</color>
     <color name="green_CP">#4CAF50</color>

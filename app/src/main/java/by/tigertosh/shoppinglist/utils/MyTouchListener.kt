@@ -12,11 +12,12 @@ class MyTouchListener : OnTouchListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(position: View, event: MotionEvent?): Boolean {
 
-        when(event?.action) {
+        when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
                 xDelta = position.x - event.rawX
                 yDelta = position.y - event.rawY
             }
+
             MotionEvent.ACTION_MOVE -> {
                 position.x = xDelta + event.rawX
                 position.y = yDelta + event.rawY

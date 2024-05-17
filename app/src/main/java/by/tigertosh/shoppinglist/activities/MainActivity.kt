@@ -8,6 +8,7 @@ import by.tigertosh.shoppinglist.R
 import by.tigertosh.shoppinglist.base.FragmentManager
 import by.tigertosh.shoppinglist.databinding.ActivityMainBinding
 import by.tigertosh.shoppinglist.fragments.NoteFragment
+import by.tigertosh.shoppinglist.fragments.ShoppingListNamesFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
             .also { setContentView(it.root) }
-
+        FragmentManager.setFragment(ShoppingListNamesFragment.newInstance(), this)
         setOnClickBNV()
 
     }
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.shop_list -> {
-                    toast("You open shop list")
+                    FragmentManager.setFragment(ShoppingListNamesFragment.newInstance(), this)
                 }
 
                 R.id.new_item -> {

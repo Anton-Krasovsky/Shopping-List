@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,10 +23,8 @@ import by.tigertosh.shoppinglist.entities.NoteItem
 import by.tigertosh.shoppinglist.fragments.NoteFragment
 import by.tigertosh.shoppinglist.utils.HtmlManager
 import by.tigertosh.shoppinglist.utils.MyTouchListener
+import by.tigertosh.shoppinglist.utils.TimeManager
 import java.io.Serializable
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class NoteActivity : AppCompatActivity() {
 
@@ -38,6 +37,7 @@ class NoteActivity : AppCompatActivity() {
         getNote()
         moveColorPicker()
         onClickColorListener()
+        actionMenuCallback()
 
     }
 
@@ -81,16 +81,12 @@ class NoteActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getCurrentTime(): String {
-        val formatter = SimpleDateFormat("hh:mm:ss - yyyy/MM/dd", Locale.getDefault())
-        return formatter.format(Calendar.getInstance().time)
-    }
 
     private fun createNewNote(): NoteItem = NoteItem(
         null,
         binding.textTitle.text.toString(),
         HtmlManager.toHtml(binding.textNoteDescription.text),
-        getCurrentTime(),
+        TimeManager.getCurrentTime(),
         ""
     )
 
@@ -153,8 +149,10 @@ class NoteActivity : AppCompatActivity() {
         if (styles.isNotEmpty()) textNoteDescription.text.removeSpan(styles[0])
 
         textNoteDescription.text
-            .setSpan(ForegroundColorSpan(ContextCompat.getColor(this@NoteActivity, colorId)),
-                startPosition, endPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            .setSpan(
+                ForegroundColorSpan(ContextCompat.getColor(this@NoteActivity, colorId)),
+                startPosition, endPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         textNoteDescription.text.trim()
         textNoteDescription.setSelection(startPosition)
     }
@@ -209,7 +207,29 @@ class NoteActivity : AppCompatActivity() {
         binding.colorPicker.setOnTouchListener(MyTouchListener())
     }
 
+    private fun actionMenuCallback() {
+        val actionCallback = object : ActionMode.Callback {
+            override fun onCreateActionMode(p0: ActionMode?, p1: Menu?): Boolean {
+                p1?.clear()
+                return true
+            }
 
+            override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean {
+                p1?.clear()
+                return true
+            }
+
+            override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onDestroyActionMode(p0: ActionMode?) {
+
+            }
+
+        }
+        binding.textNoteDescription.customSelectionActionModeCallback = actionCallback
+    }
 
 
 }
