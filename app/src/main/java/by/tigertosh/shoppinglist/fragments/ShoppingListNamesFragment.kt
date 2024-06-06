@@ -1,5 +1,6 @@
 package by.tigertosh.shoppinglist.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.tigertosh.shoppinglist.activities.MainApp
+import by.tigertosh.shoppinglist.activities.ShopListActivity
 import by.tigertosh.shoppinglist.adapter.ListNameAdapter
 import by.tigertosh.shoppinglist.adapter.ListenerListName
 
@@ -80,7 +82,10 @@ class ShoppingListNamesFragment : BaseFragment(), ListenerListName {
     }
 
     override fun onClickItem(name: ShoppingListName) {
-        TODO("Not yet implemented")
+        val intent = Intent(activity, ShopListActivity::class.java).apply {
+            putExtra(ShopListActivity.SHOP_LIST_NAME, name)
+        }
+        startActivity(intent)
     }
 
     override fun deleteItem(id: Int) {
@@ -88,7 +93,7 @@ class ShoppingListNamesFragment : BaseFragment(), ListenerListName {
             context as AppCompatActivity,
             object : DeleteShopListNameDialog.Listener {
                 override fun onclick() {
-                    viewModel.deleteShoppingListName(id)
+                    viewModel.deleteShoppingList(id, true)
                 }
 
             })

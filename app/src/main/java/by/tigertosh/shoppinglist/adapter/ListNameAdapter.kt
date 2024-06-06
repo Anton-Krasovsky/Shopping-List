@@ -27,7 +27,7 @@ class ListNameAdapter(private val listener: ListenerListName) :
             titleListName.text = listName.listName
             timeListName.text = listName.time
             itemView.setOnClickListener {
-
+                listener.onClickItem(listName)
             }
             deleteListName.setOnClickListener {
                 listener.deleteItem(listName.id!!)
