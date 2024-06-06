@@ -21,7 +21,7 @@ object ShareManager {
         sBuilder.append("<<$listName>>")
         sBuilder.append("\n")
         shopList.forEach {
-            sBuilder.append("${counter++} - ${it.name} (${it.itemInfo})")
+            sBuilder.append("${++counter} - ${it.name} (${it.itemInfo ?: ""})")
             sBuilder.append("\n")
         }
         return sBuilder.toString()
