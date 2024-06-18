@@ -3,12 +3,15 @@ package by.tigertosh.shoppinglist.activities
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.tigertosh.shoppinglist.R
 import by.tigertosh.shoppinglist.adapter.ListenerListItem
@@ -31,6 +34,7 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
     private lateinit var saveItem: MenuItem
     private var editText: EditText? = null
     private lateinit var adapter: ShopListItemAdapter
+    private lateinit var textWatcher: TextWatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +51,23 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
         editText = newItem.actionView?.findViewById<EditText>(R.id.addNewShopListItem)!!
         saveItem.isVisible = false
         newItem.setOnActionExpandListener(expandActionView())
+        textWatcher = observerTextWatcher()
         return true
+    }
+
+    private fun observerTextWatcher(): TextWatcher = object : TextWatcher{
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
+
+        }
+
     }
 
     private fun addNewShopListItem() {
@@ -92,11 +112,13 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
         return object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
                 saveItem.isVisible = true
+                editText?.addTextChangedListener(textWatcher)
                 return true
             }
 
             override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
                 saveItem.isVisible = false
+                editText?.removeTextChangedListener(textWatcher)
                 invalidateOptionsMenu()
                 return true
             }
