@@ -1,6 +1,7 @@
 package by.tigertosh.shoppinglist.base
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -14,11 +15,17 @@ import kotlinx.coroutines.launch
 class BaseViewModel(database: MainDataBase) : ViewModel() {
 
     private val dao = database.dao
+    val libraryItem = MutableLiveData<List<LibraryItem>>()
     val allNotes: LiveData<List<NoteItem>> = dao.getAllNotes().asLiveData()
     val allShopListNames: LiveData<List<ShoppingListName>> = dao.getAllShopListName().asLiveData()
 
     fun getAllShopListItem(id: Int): LiveData<List<ShoppingListItem>> =
         dao.getAllShopListItem(id).asLiveData()
+
+    fun getAllLibraryItem(name: String) = viewModelScope.launch {
+        libraryItem.postValue(dao.getAllLibraryItem(name))
+    }
+
 
     private suspend fun isAllLibraryItemExists(name: String): Boolean =
         dao.getAllLibraryItem(name).isNotEmpty()

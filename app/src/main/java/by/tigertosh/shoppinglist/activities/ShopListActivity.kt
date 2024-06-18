@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.tigertosh.shoppinglist.R
 import by.tigertosh.shoppinglist.adapter.ListenerListItem
@@ -55,13 +54,13 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
         return true
     }
 
-    private fun observerTextWatcher(): TextWatcher = object : TextWatcher{
+    private fun observerTextWatcher(): TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
         }
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+            viewModel.getAllLibraryItem("%$p0%")
         }
 
         override fun afterTextChanged(p0: Editable?) {
@@ -89,19 +88,24 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
             R.id.save_item_list -> {
                 addNewShopListItem()
             }
+
             R.id.delete_list -> {
                 viewModel.deleteShoppingList(shopListName?.id!!, true)
                 finish()
             }
+
             R.id.clear_list -> {
                 viewModel.deleteShoppingList(shopListName?.id!!, false)
 
             }
+
             R.id.share_list -> {
-                startActivity(Intent.createChooser(
-                    ShareManager.shareShopList(adapter.currentList, shopListName?.listName!!),
-                    "Поделиться с помощью"
-                ))
+                startActivity(
+                    Intent.createChooser(
+                        ShareManager.shareShopList(adapter.currentList, shopListName?.listName!!),
+                        "Поделиться с помощью"
+                    )
+                )
 
             }
         }
@@ -113,6 +117,10 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
             override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
                 saveItem.isVisible = true
                 editText?.addTextChangedListener(textWatcher)
+                libraryItemObserver()
+                viewModel.getAllShopListItem(shopListName?.id!!)
+                    .removeObservers(this@ShopListActivity)
+                viewModel.getAllLibraryItem("%%")
                 return true
             }
 
@@ -120,6 +128,9 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
                 saveItem.isVisible = false
                 editText?.removeTextChangedListener(textWatcher)
                 invalidateOptionsMenu()
+                viewModel.libraryItem.removeObservers(this@ShopListActivity)
+                editText?.setText("")
+                listItemObserver()
                 return true
             }
 
@@ -130,6 +141,24 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
         viewModel.getAllShopListItem(shopListName?.id!!).observe(this) {
             adapter.submitList(it)
             binding.textList.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun libraryItemObserver() {
+        viewModel.libraryItem.observe(this) {
+            val tempShopList = ArrayList<ShoppingListItem>()
+            it.forEach { item ->
+                val shopItem = ShoppingListItem(
+                    item.id,
+                    item.name,
+                    "",
+                    false,
+                    0,
+                    1
+                )
+                tempShopList.add(shopItem)
+            }
+            adapter.submitList(tempShopList)
         }
     }
 
@@ -154,7 +183,7 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
     }
 
     override fun onClickItem(item: ShoppingListItem, state: Int) {
-        when(state) {
+        when (state) {
             ShopListItemAdapter.CHECK_BOX -> viewModel.updateListItem(item)
             ShopListItemAdapter.EDIT -> editListItem(item)
         }
@@ -162,15 +191,13 @@ class ShopListActivity : AppCompatActivity(), ListenerListItem {
     }
 
     private fun editListItem(item: ShoppingListItem) {
-        UpdateListItemDialog.showDialog(this, item, object : UpdateListItemDialog.Listener{
+        UpdateListItemDialog.showDialog(this, item, object : UpdateListItemDialog.Listener {
             override fun onclick(item: ShoppingListItem) {
                 viewModel.updateListItem(item)
             }
 
         })
     }
-
-
 
 
 }

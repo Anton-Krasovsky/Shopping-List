@@ -85,7 +85,7 @@ class ShopListItemAdapter(private val listener: ListenerListItem) :
         fun setLibraryData(item: ShoppingListItem, listener: ListenerListItem) {
             val binding = LibraryListItemBinding.bind(view)
             binding.apply {
-
+                textItemList.text = item.name
             }
         }
     }
